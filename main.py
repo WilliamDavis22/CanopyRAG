@@ -63,7 +63,7 @@ if uploaded_files is not None:
 if len(list_canopy_indexes()) > 0:
     indexes = [item.replace('canopy--','') for item in list_canopy_indexes()]
     if 'processed_files' in st.session_state.keys():
-        files = [item.replace('.pdf','').replace('_','-').replace(' ','-').lower() for item in list(st.session_state['processed_files'].keys())]
+        files = [item.replace('.pdf','').replace('_','-').replace(' ','-').replace('.', '-').lower() for item in list(st.session_state['processed_files'].keys())]
         indexes += files
         indexes = list(set(indexes))
         
@@ -74,7 +74,7 @@ if len(list_canopy_indexes()) > 0:
 
 if 'selected_file' in st.session_state.keys():
     fp = selected_file.replace('.pdf','')
-    idx_name = fp.replace(' ','-').replace('_','-').lower()
+    idx_name = fp.replace(' ','-').replace('_','-').replace('.', '-').lower()
     if f'canopy--{idx_name}' in list_canopy_indexes():
         kb = KnowledgeBase(index_name=idx_name)
         kb.connect()
