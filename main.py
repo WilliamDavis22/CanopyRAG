@@ -30,11 +30,15 @@ if uploaded_files is not None:
     if len(uploaded_files) != len(processed_files) or len(processed_files) == 0:
         processed_pages = []
         for uploaded_file in uploaded_files:
-            if uploaded_file.name not in processed_files.keys():
-                with st.spinner(f"Reading {uploaded_file.name}..."):
+
+            fname = uploaded_file.name
+            fname = re.sub('[^0-9a-zA-Z]+', '-', fname.replace('.pdf','').lower())
+
+            if fname not in processed_files.keys():
+                with st.spinner(f"Reading {fname}..."):
                     pdf_file = None
                     processed_pages = None
-                    formatted_json_fp = uploaded_file.name.replace('.pdf','.json')
+                    formatted_json_fp = fname + ".json"
                     if not os.path.exists(formatted_json_fp):
                         with open(uploaded_file.name,'wb') as f:
                             f.write(uploaded_file.getvalue())
@@ -57,7 +61,7 @@ if uploaded_files is not None:
                         with open(formatted_json_fp, 'r') as json_file:
                             data = json.load(json_file)
 
-                processed_files[uploaded_file.name] = data
+                processed_files[fname] = data
                 st.session_state['processed_files'] = processed_files
             print("Reading Complete")
 
@@ -90,7 +94,7 @@ if 'selected_file' in st.session_state.keys():
         documents = [Document(id=line['id'],
                         text=line['text'],
                         source=line['source'],
-                        metadata=line['metadata']) for line in st.session_state['processed_files'][fp+'.pdf']]
+                        metadata=line['metadata']) for line in st.session_state['processed_files'][fp]]
         with st.spinner(f"Creating new index for {selected_file}... "):
             kb.upsert(documents,show_progress_bar=True)
 
