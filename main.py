@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import re
 import json
 import fitz
 
@@ -63,18 +64,19 @@ if uploaded_files is not None:
 if len(list_canopy_indexes()) > 0:
     indexes = [item.replace('canopy--','') for item in list_canopy_indexes()]
     if 'processed_files' in st.session_state.keys():
-        files = [item.replace('.pdf','').replace('_','-').replace(' ','-').replace('.', '-').lower() for item in list(st.session_state['processed_files'].keys())]
+        files = [re.sub('[^0-9a-zA-Z]+', '-', item.replace('.pdf','').lower()) for item in list(st.session_state['processed_files'].keys())]
         indexes += files
         indexes = list(set(indexes))
         
-    selected_file = st.radio("Indexes", indexes, index=0,
+    selected_file = st.radio("Indexes", indexes, index=None,
                         key="file_lookup_key",help="Document to use for RAG",horizontal=False)
     if 'selected_file' not in st.session_state.keys():
         st.session_state['selected_file'] = selected_file
 
 if 'selected_file' in st.session_state.keys():
     fp = selected_file.replace('.pdf','')
-    idx_name = fp.replace(' ','-').replace('_','-').replace('.', '-').lower()
+    fp = re.sub('[^0-9a-zA-Z]+', '-', fp).lower()
+    idx_name = fp
     if f'canopy--{idx_name}' in list_canopy_indexes():
         kb = KnowledgeBase(index_name=idx_name)
         kb.connect()
