@@ -60,15 +60,21 @@ if uploaded_files is not None:
                 st.session_state['processed_files'] = processed_files
             print("Reading Complete")
 
-if 'processed_files' in st.session_state.keys() and len(st.session_state['processed_files'].keys()) > 0:
-    len_files = len(st.session_state['processed_files'].keys())
-    selected_file = st.radio("Document for RAG", st.session_state['processed_files'].keys(), index=0,
-                             key="file_lookup_key",help="Document to use for RAG",horizontal=False)
+if len(list_canopy_indexes()) > 0:
+    indexes = [item.replace('canopy--','') for item in list_canopy_indexes()]
+    if 'processed_files' in st.session_state.keys():
+        files = [item.replace('.pdf','').replace('_','-').replace(' ','-').lower() for item in list(st.session_state['processed_files'].keys())]
+        indexes += files
+        indexes = list(set(indexes))
+        
+    selected_file = st.radio("Indexes", indexes, index=0,
+                        key="file_lookup_key",help="Document to use for RAG",horizontal=False)
     if 'selected_file' not in st.session_state.keys():
         st.session_state['selected_file'] = selected_file
 
+if 'selected_file' in st.session_state.keys():
     fp = selected_file.replace('.pdf','')
-    idx_name = fp.replace(' ','-').lower()
+    idx_name = fp.replace(' ','-').replace('_','-').lower()
     if f'canopy--{idx_name}' in list_canopy_indexes():
         kb = KnowledgeBase(index_name=idx_name)
         kb.connect()
