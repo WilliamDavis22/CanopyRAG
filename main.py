@@ -73,8 +73,8 @@ if len(list_canopy_indexes()) > 0:
     if 'selected_file' not in st.session_state.keys():
         st.session_state['selected_file'] = selected_file
 
-if 'selected_file' in st.session_state.keys():
-    fp = selected_file.replace('.pdf','')
+if 'selected_file' in st.session_state.keys() and st.session_state['selected_file'] is not None:
+    fp = st.session_state['selected_file'].replace('.pdf','')
     fp = re.sub('[^0-9a-zA-Z]+', '-', fp).lower()
     idx_name = fp
     if f'canopy--{idx_name}' in list_canopy_indexes():
