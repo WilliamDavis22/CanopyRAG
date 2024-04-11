@@ -30,15 +30,11 @@ if uploaded_files is not None:
     if len(uploaded_files) != len(processed_files) or len(processed_files) == 0:
         processed_pages = []
         for uploaded_file in uploaded_files:
-
-            fname = uploaded_file.name
-            fname = re.sub('[^0-9a-zA-Z]+', '-', fname.replace('.pdf','').lower())
-
-            if fname not in processed_files.keys():
-                with st.spinner(f"Reading {fname}..."):
+            if uploaded_file.name not in processed_files.keys():
+                with st.spinner(f"Reading {uploaded_file.name}..."):
                     pdf_file = None
                     processed_pages = None
-                    formatted_json_fp = fname + ".json"
+                    formatted_json_fp = uploaded_file.name.replace('.pdf','.json')
                     if not os.path.exists(formatted_json_fp):
                         with open(uploaded_file.name,'wb') as f:
                             f.write(uploaded_file.getvalue())
@@ -61,26 +57,26 @@ if uploaded_files is not None:
                         with open(formatted_json_fp, 'r') as json_file:
                             data = json.load(json_file)
 
-                processed_files[fname] = data
+                processed_files[uploaded_file.name] = data
                 st.session_state['processed_files'] = processed_files
             print("Reading Complete")
 
 if len(list_canopy_indexes()) > 0:
     indexes = [item.replace('canopy--','') for item in list_canopy_indexes()]
     if 'processed_files' in st.session_state.keys():
-        files = [re.sub('[^0-9a-zA-Z]+', '-', item.replace('.pdf','').lower()) for item in list(st.session_state['processed_files'].keys())]
+        files = [item.replace('.pdf','').replace('_','-').replace(' ','-').lower() for item in list(st.session_state['processed_files'].keys())]
         indexes += files
         indexes = list(set(indexes))
         
     selected_file = st.radio("Indexes", indexes, index=0,
                         key="file_lookup_key",help="Document to use for RAG",horizontal=False)
+    print(selected_file)
     if 'selected_file' not in st.session_state.keys():
         st.session_state['selected_file'] = selected_file
 
 if 'selected_file' in st.session_state.keys():
     fp = selected_file.replace('.pdf','')
-    fp = re.sub('[^0-9a-zA-Z]+', '-', fp).lower()
-    idx_name = fp
+    idx_name = fp.replace(' ','-').replace('_','-').lower()
     if f'canopy--{idx_name}' in list_canopy_indexes():
         kb = KnowledgeBase(index_name=idx_name)
         kb.connect()
@@ -94,7 +90,7 @@ if 'selected_file' in st.session_state.keys():
         documents = [Document(id=line['id'],
                         text=line['text'],
                         source=line['source'],
-                        metadata=line['metadata']) for line in st.session_state['processed_files'][fp]]
+                        metadata=line['metadata']) for line in st.session_state['processed_files'][fp+'.pdf']]
         with st.spinner(f"Creating new index for {selected_file}... "):
             kb.upsert(documents,show_progress_bar=True)
 
