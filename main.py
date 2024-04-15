@@ -35,7 +35,9 @@ if len(list_canopy_indexes()) > 0:
     if 'selected_file' not in st.session_state.keys():
         st.session_state['selected_file'] = selected_file
 
-uploaded_files = st.file_uploader(label="Upload your files", key='upload_file',accept_multiple_files=True)
+cols = st.columns([.3,.7])
+with cols[0]:
+    uploaded_files = st.file_uploader(label="Upload your files", key='upload_file',accept_multiple_files=True)
 if 'processed_files' not in st.session_state:
     processed_files = {}
 else:
