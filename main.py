@@ -20,7 +20,7 @@ from canopy.knowledge_base import list_canopy_indexes
 Tokenizer.initialize()
 
 st.set_page_config(layout="wide")
-st.title("RAG Demo")
+st.title("Chat with your Documents")
 
 if len(list_canopy_indexes()) > 0:
     indexes = [item.replace('canopy--','') for item in list_canopy_indexes()]
