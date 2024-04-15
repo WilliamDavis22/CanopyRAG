@@ -3,7 +3,7 @@ import os
 import re
 import json
 import fitz
-
+from streamlit_pdf_viewer import pdf_viewer
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -19,7 +19,21 @@ from canopy.knowledge_base import list_canopy_indexes
 
 Tokenizer.initialize()
 
+st.set_page_config(layout="wide")
 st.title("RAG Demo")
+
+if len(list_canopy_indexes()) > 0:
+    indexes = [item.replace('canopy--','') for item in list_canopy_indexes()]
+    if 'processed_files' in st.session_state.keys():
+        files = [item.replace('.pdf','').replace('_','-').replace(' ','-').lower() for item in list(st.session_state['processed_files'].keys())]
+        indexes += files
+        indexes = list(set(indexes))
+        
+    selected_file = st.radio("Indexes", indexes, index=0,
+                        key="file_lookup_key",help="Document to use for RAG",horizontal=True)
+    print(selected_file)
+    if 'selected_file' not in st.session_state.keys():
+        st.session_state['selected_file'] = selected_file
 
 uploaded_files = st.file_uploader(label="Upload your files", key='upload_file',accept_multiple_files=True)
 if 'processed_files' not in st.session_state:
@@ -61,19 +75,6 @@ if uploaded_files is not None:
                 st.session_state['processed_files'] = processed_files
             print("Reading Complete")
 
-if len(list_canopy_indexes()) > 0:
-    indexes = [item.replace('canopy--','') for item in list_canopy_indexes()]
-    if 'processed_files' in st.session_state.keys():
-        files = [item.replace('.pdf','').replace('_','-').replace(' ','-').lower() for item in list(st.session_state['processed_files'].keys())]
-        indexes += files
-        indexes = list(set(indexes))
-        
-    selected_file = st.radio("Indexes", indexes, index=0,
-                        key="file_lookup_key",help="Document to use for RAG",horizontal=False)
-    print(selected_file)
-    if 'selected_file' not in st.session_state.keys():
-        st.session_state['selected_file'] = selected_file
-
 if 'selected_file' in st.session_state.keys():
     fp = selected_file.replace('.pdf','')
     idx_name = fp.replace(' ','-').replace('_','-').lower()
@@ -98,19 +99,34 @@ if 'selected_file' in st.session_state.keys():
     chat_engine = ChatEngine(context_engine,allow_model_params_override=True)
 
 st.markdown("Chat with your document below")
-if "messages" not in st.session_state:
-    st.session_state.messages = []
 
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+col1,col2 = st.columns([0.5,0.5])
+with col1:
+    pdf_list = [item for item in os.listdir('./') if '.pdf' in item]
+    dct = {}
+    for item in pdf_list:
+        idx = item.replace('.pdf','')
+        idx = idx.replace(' ','-').replace('_','-').lower()
+        dct[idx] = item
 
-if prompt := st.chat_input("What is up?"):
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
+    with open(pdf_list[1],'rb') as f:
+        pdf_view = f.read()
 
-    with st.chat_message("assistant"):
+    with st.container(height=707):
+        pdf_viewer(dct[selected_file],height=650,width=600)
+            
+with col2:
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    with st.container(height=650):
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+
+    if prompt := st.chat_input("What is up?"):
+        st.session_state.messages.append({"role": "user", "content": prompt})
+
         messages = []
         for m in st.session_state.messages:
             if m['role'] == 'user':
@@ -122,7 +138,6 @@ if prompt := st.chat_input("What is up?"):
             messages=messages,
             stream=False, 
             model_params={'model':'gpt-4-0125-preview','temperature':0,'seed':42})
-        print(res)
-        response = st.write(res.choices[0].message.content)
-        
-    st.session_state.messages.append({"role": "assistant", "content": res.choices[0].message.content})
+
+        st.session_state.messages.append({"role": "assistant", "content": res.choices[0].message.content})
+        st.rerun()
