@@ -74,18 +74,18 @@ with col1:
         idx = idx.replace(' ','-').replace('_','-').lower()
         dct[idx] = item
 
-    pdf_viewer(dct[selected_file],height=1000,width=800)
+    pdf_viewer(dct[selected_file],height=800,width=800)
             
 with col2:
 
-    prompt = None
+    prompt = st.chat_input("What's on your mind?")
    
     with stylable_container(
          key="container_with_border",
          css_styles="""
              {
-                 min-height: 1000px;
-                 max-height: 1000px;
+                 min-height: 800px;
+                 max-height: 800px;
                  background-color: white;
                  border: 1px solid rgba(49, 51, 63, 0.2);
                  border-radius: 0.5rem;
@@ -127,8 +127,6 @@ with col2:
                 with st.chat_message("assistant"):
                     st.markdown(ans) 
                 st.session_state.messages.append({"role": "assistant", "content": ans})
-
-    st.chat_input("What's on your mind?")
 
 # cols = st.columns([.5,.5])
 # with cols[0]:
