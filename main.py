@@ -62,6 +62,9 @@ if 'selected_file' in st.session_state.keys():
 
 st.markdown("Chat with your document below")
 
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
 col1,col2 = st.columns([0.5,0.5],gap="small")
 with col1:
     pdf_list = [item for item in os.listdir('./') if '.pdf' in item]
@@ -75,32 +78,29 @@ with col1:
             
 with col2:
 
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-
     if prompt := st.chat_input("What's on your mind?"):
+        with st.chat_message("user"):
+            st.markdown(prompt)
         st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
         
-    messages = []
-    for m in st.session_state.messages:
-        if m['role'] == 'user':
-            messages.append(UserMessage(content=m['content']))
-        else:
-            messages.append(SystemMessage(content=m['content']))
-    res = chat_engine.chat(
-        messages=messages,
-        stream=False, 
-        model_params={'model':'gpt-4-0125-preview','temperature':0,'seed':42})
-    
-    ans = res.choices[0].message.content
-    sources = re.findall(f'Source: {dct[selected_file]}: page \d*',ans,re.IGNORECASE)
-    for s in sources:
-        ans = ans.replace(s,f'**{s}**')
-    st.session_state.messages.append({"role": "assistant", "content": ans})
-    with st.chat_message("assistant"):
-        st.markdown(ans) 
+        messages = []
+        for m in st.session_state.messages:
+            if m['role'] == 'user':
+                messages.append(UserMessage(content=m['content']))
+            else:
+                messages.append(SystemMessage(content=m['content']))
+        res = chat_engine.chat(
+            messages=messages,
+            stream=False, 
+            model_params={'model':'gpt-4-0125-preview','temperature':0,'seed':42})
+        
+        ans = res.choices[0].message.content
+        sources = re.findall(f'Source: {dct[selected_file]}: page \d*',ans,re.IGNORECASE)
+        for s in sources:
+            ans = ans.replace(s,f'**{s}**')
+        with st.chat_message("assistant"):
+            st.markdown(ans) 
+        st.session_state.messages.append({"role": "assistant", "content": ans})
 
 cols = st.columns([.5,.5])
 with cols[0]:
