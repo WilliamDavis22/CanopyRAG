@@ -65,7 +65,7 @@ st.markdown("Chat with your document below")
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-col1,col2 = st.columns([0.5,0.5],gap="small")
+col1,col2 = st.columns([0.45,0.55],gap="small")
 with col1:
     pdf_list = [item for item in os.listdir('./') if '.pdf' in item]
     dct = {}
@@ -94,6 +94,14 @@ with col2:
              }
              """,
          ):
+        
+        for m in st.session_state.messages:
+            if m['role'] == 'user':
+                with st.chat_message("user"):
+                   st.markdown(m['content'])
+            else:
+                with st.chat_message("assistant"):
+                    st.markdown(['content'])
 
         if prompt := st.chat_input("What's on your mind?"):
             with st.chat_message("user"):
