@@ -65,7 +65,7 @@ st.markdown("Chat with your document below")
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-col1,col2 = st.columns([0.45,0.55],gap="small")
+col1,col2 = st.columns([0.5,0.5],gap="small")
 with col1:
     pdf_list = [item for item in os.listdir('./') if '.pdf' in item]
     dct = {}
@@ -82,15 +82,13 @@ with col2:
          key="container_with_border",
          css_styles="""
              {
-                 min-height: 600px;
-                 max-height: 600px;
-                 background-color: white;
-                 border: 1px solid rgba(49, 51, 63, 0.2);
-                 border-radius: 0.5rem;
-                 padding: calc(1em - 1px);
-                 min-width: 680px;
-                 max_width: 680px;
-                 overflow-y: auto
+                min-height: 600px;
+                max-height: 600px;
+                background-color: white;
+                border: 1px solid rgba(49, 51, 63, 0.2);
+                border-radius: 0.5rem;
+                padding: calc(1em - 1px);
+                overflow-y: auto
              }
              """,
          ):
