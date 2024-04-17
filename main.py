@@ -74,7 +74,7 @@ with col1:
         idx = idx.replace(' ','-').replace('_','-').lower()
         dct[idx] = item
 
-    pdf_viewer(dct[selected_file],height=800,width=800)
+    pdf_viewer(dct[selected_file],height=1000,width=800)
             
 with col2:
 
