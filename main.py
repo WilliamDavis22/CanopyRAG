@@ -84,8 +84,8 @@ with col2:
          key="container_with_border",
          css_styles="""
              {
-                 min-height: 600px;
-                 max-height: 600px;
+                 min-height: 1000px;
+                 max-height: 1000px;
                  background-color: white;
                  border: 1px solid rgba(49, 51, 63, 0.2);
                  border-radius: 0.5rem;
