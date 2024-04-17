@@ -78,7 +78,7 @@ with col1:
             
 with col2:
 
-    prompt = st.chat_input("What's on your mind?")
+    prompt = None
    
     with stylable_container(
          key="container_with_border",
@@ -127,6 +127,8 @@ with col2:
                 with st.chat_message("assistant"):
                     st.markdown(ans) 
                 st.session_state.messages.append({"role": "assistant", "content": ans})
+
+    st.chat_input("What's on your mind?")
 
 # cols = st.columns([.5,.5])
 # with cols[0]:
