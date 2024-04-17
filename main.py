@@ -77,10 +77,18 @@ with col1:
     pdf_viewer(dct[selected_file],height=600,width=510)
             
 with col2:
+   
+    for m in st.session_state.messages:
+        if m['role'] == 'user':
+            with st.chat_message("user"):
+                st.markdown(m['content'])
+        else:
+            with st.chat_message("assistant"):
+                st.markdown(m['content'])
 
     if prompt := st.chat_input("What's on your mind?"):
-        # with st.chat_message("user"):
-        #     st.markdown(prompt)
+        with st.chat_message("user"):
+            st.markdown(prompt)
         st.session_state.messages.append({"role": "user", "content": prompt})
         
         messages = []
@@ -98,32 +106,9 @@ with col2:
         sources = re.findall(f'Source: {dct[selected_file]}: page \d*',ans,re.IGNORECASE)
         for s in sources:
             ans = ans.replace(s,f'**{s}**')
-        # with st.chat_message("assistant"):
-        #     st.markdown(ans) 
+        with st.chat_message("assistant"):
+            st.markdown(ans) 
         st.session_state.messages.append({"role": "assistant", "content": ans})
-
-    with stylable_container(
-         key="container_with_border",
-         css_styles="""
-             {
-                min-height: 600px;
-                max-height: 600px;
-                background-color: white;
-                border: 1px solid rgba(49, 51, 63, 0.2);
-                border-radius: 0.5rem;
-                padding: calc(1em - 1px);
-                overflow-y: auto
-             }
-             """,
-         ):
-        
-        for m in st.session_state.messages:
-            if m['role'] == 'user':
-                with st.chat_message("user"):
-                   st.markdown(m['content'])
-            else:
-                with st.chat_message("assistant"):
-                    st.markdown(m['content'])
 
 cols = st.columns([.5,.5])
 with cols[0]:
