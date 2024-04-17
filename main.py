@@ -74,28 +74,6 @@ with col1:
     pdf_viewer(dct[selected_file],height=600,width=510)
             
 with col2:
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-
-    if prompt := st.chat_input("What's on your mind?"):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        
-    messages = []
-    for m in st.session_state.messages:
-        if m['role'] == 'user':
-            messages.append(UserMessage(content=m['content']))
-        else:
-            messages.append(SystemMessage(content=m['content']))
-    res = chat_engine.chat(
-        messages=messages,
-        stream=False, 
-        model_params={'model':'gpt-4-0125-preview','temperature':0,'seed':42})
-    
-    ans = res.choices[0].message.content
-    sources = re.findall(f'Source: {dct[selected_file]}: page \d*',ans,re.IGNORECASE)
-    for s in sources:
-        ans = ans.replace(s,f'**{s}**')
-    st.session_state.messages.append({"role": "assistant", "content": ans})
 
     with stylable_container(
         key="container_with_border",
@@ -113,9 +91,32 @@ with col2:
             }
             """,
         ):
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
+
+        if prompt := st.chat_input("What's on your mind?"):
+            st.session_state.messages.append({"role": "user", "content": prompt})
+            
+        messages = []
+        for m in st.session_state.messages:
+            if m['role'] == 'user':
+                messages.append(UserMessage(content=m['content']))
+            else:
+                messages.append(SystemMessage(content=m['content']))
+        res = chat_engine.chat(
+            messages=messages,
+            stream=False, 
+            model_params={'model':'gpt-4-0125-preview','temperature':0,'seed':42})
+        
+        ans = res.choices[0].message.content
+        sources = re.findall(f'Source: {dct[selected_file]}: page \d*',ans,re.IGNORECASE)
+        for s in sources:
+            ans = ans.replace(s,f'**{s}**')
+        st.session_state.messages.append({"role": "assistant", "content": ans})
+
         for message in st.session_state.messages:
             with st.chat_message(message["role"]):
-                st.markdown(message["content"])
+                st.markdown(message["content"])        
 
 cols = st.columns([.5,.5])
 with cols[0]:
