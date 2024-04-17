@@ -77,6 +77,8 @@ with col1:
     pdf_viewer(dct[selected_file],height=600,width=510)
             
 with col2:
+
+    prompt = st.chat_input("What's on your mind?")
    
     for m in st.session_state.messages:
         if m['role'] == 'user':
@@ -86,7 +88,7 @@ with col2:
             with st.chat_message("assistant"):
                 st.markdown(m['content'])
 
-    if prompt := st.chat_input("What's on your mind?"):
+    if prompt:
         with st.chat_message("user"):
             st.markdown(prompt)
         st.session_state.messages.append({"role": "user", "content": prompt})
