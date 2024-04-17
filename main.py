@@ -79,8 +79,8 @@ with col1:
 with col2:
 
     if prompt := st.chat_input("What's on your mind?"):
-        with st.chat_message("user"):
-            st.markdown(prompt)
+        # with st.chat_message("user"):
+        #     st.markdown(prompt)
         st.session_state.messages.append({"role": "user", "content": prompt})
         
         messages = []
@@ -98,8 +98,8 @@ with col2:
         sources = re.findall(f'Source: {dct[selected_file]}: page \d*',ans,re.IGNORECASE)
         for s in sources:
             ans = ans.replace(s,f'**{s}**')
-        with st.chat_message("assistant"):
-            st.markdown(ans) 
+        # with st.chat_message("assistant"):
+        #     st.markdown(ans) 
         st.session_state.messages.append({"role": "assistant", "content": ans})
 
     with stylable_container(
@@ -123,7 +123,7 @@ with col2:
                    st.markdown(m['content'])
             else:
                 with st.chat_message("assistant"):
-                    st.markdown(['content'])
+                    st.markdown(m['content'])
 
 cols = st.columns([.5,.5])
 with cols[0]:
