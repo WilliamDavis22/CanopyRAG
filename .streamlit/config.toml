@@ -2,7 +2,7 @@
 showErrorDetails = false
 
 [theme]
-base = "light"
+#base = "light"
 #primaryColor = "#F63366"
-#backgroundColor = "white"
+backgroundColor = "#F4F0EB"
 #secondaryBackgroundColor = "black"
