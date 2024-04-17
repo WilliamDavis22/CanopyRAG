@@ -74,7 +74,7 @@ with col1:
         idx = idx.replace(' ','-').replace('_','-').lower()
         dct[idx] = item
 
-    pdf_viewer(dct[selected_file],height=600,width=600)
+    pdf_viewer(dct[selected_file],height=600,width=800)
             
 with col2:
 
@@ -128,45 +128,45 @@ with col2:
                     st.markdown(ans) 
                 st.session_state.messages.append({"role": "assistant", "content": ans})
 
-cols = st.columns([.5,.5])
-with cols[0]:
-    with st.expander(label=""):
-        uploaded_files = st.file_uploader(label="Upload your files", key='upload_file',accept_multiple_files=True)
-        if 'processed_files' not in st.session_state:
-            processed_files = {}
-        else:
-            processed_files = st.session_state['processed_files']
-        if uploaded_files is not None:
-            if len(uploaded_files) != len(processed_files) or len(processed_files) == 0:
-                processed_pages = []
-                for uploaded_file in uploaded_files:
-                    if uploaded_file.name not in processed_files.keys():
-                        with st.spinner(f"Reading {uploaded_file.name}..."):
-                            pdf_file = None
-                            processed_pages = None
-                            formatted_json_fp = uploaded_file.name.replace('.pdf','.json')
-                            if not os.path.exists(formatted_json_fp):
-                                with open(uploaded_file.name,'wb') as f:
-                                    f.write(uploaded_file.getvalue())
-                                doc = fitz.open(uploaded_file.name)
-                                extracted_text = [page.get_text() for page in doc]
-                                data = []
-                                for i,page in enumerate(extracted_text):
-                                    data.append({
-                                        'id': str(i), 
-                                        'text': page, 
-                                        'source': f'{uploaded_file.name}: page {i+1}', 
-                                        'metadata': {'title': uploaded_file.name,
-                                                    'primary_category': 'Finance',
-                                                    'published': 2024
-                                                    },
-                                    })
-                                with open(formatted_json_fp, 'w') as out_fp:
-                                    json.dump(data,out_fp,indent=4)
-                            else:
-                                with open(formatted_json_fp, 'r') as json_file:
-                                    data = json.load(json_file)
+# cols = st.columns([.5,.5])
+# with cols[0]:
+#     with st.expander(label=""):
+#         uploaded_files = st.file_uploader(label="Upload your files", key='upload_file',accept_multiple_files=True)
+#         if 'processed_files' not in st.session_state:
+#             processed_files = {}
+#         else:
+#             processed_files = st.session_state['processed_files']
+#         if uploaded_files is not None:
+#             if len(uploaded_files) != len(processed_files) or len(processed_files) == 0:
+#                 processed_pages = []
+#                 for uploaded_file in uploaded_files:
+#                     if uploaded_file.name not in processed_files.keys():
+#                         with st.spinner(f"Reading {uploaded_file.name}..."):
+#                             pdf_file = None
+#                             processed_pages = None
+#                             formatted_json_fp = uploaded_file.name.replace('.pdf','.json')
+#                             if not os.path.exists(formatted_json_fp):
+#                                 with open(uploaded_file.name,'wb') as f:
+#                                     f.write(uploaded_file.getvalue())
+#                                 doc = fitz.open(uploaded_file.name)
+#                                 extracted_text = [page.get_text() for page in doc]
+#                                 data = []
+#                                 for i,page in enumerate(extracted_text):
+#                                     data.append({
+#                                         'id': str(i), 
+#                                         'text': page, 
+#                                         'source': f'{uploaded_file.name}: page {i+1}', 
+#                                         'metadata': {'title': uploaded_file.name,
+#                                                     'primary_category': 'Finance',
+#                                                     'published': 2024
+#                                                     },
+#                                     })
+#                                 with open(formatted_json_fp, 'w') as out_fp:
+#                                     json.dump(data,out_fp,indent=4)
+#                             else:
+#                                 with open(formatted_json_fp, 'r') as json_file:
+#                                     data = json.load(json_file)
 
-                        processed_files[uploaded_file.name] = data
-                        st.session_state['processed_files'] = processed_files
-                    print("Reading Complete")
+#                         processed_files[uploaded_file.name] = data
+#                         st.session_state['processed_files'] = processed_files
+#                     print("Reading Complete")
