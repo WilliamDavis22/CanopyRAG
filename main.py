@@ -68,6 +68,12 @@ if "messages" not in st.session_state:
 col1,col2 = st.columns([0.5,0.5],gap="small")
             
 with col1:
+    pdf_list = [item for item in os.listdir('./') if '.pdf' in item]
+    dct = {}
+    for item in pdf_list:
+        idx = item.replace('.pdf','')
+        idx = idx.replace(' ','-').replace('_','-').lower()
+        dct[idx] = item
 
     prompt = st.chat_input("What's on your mind?")
    
