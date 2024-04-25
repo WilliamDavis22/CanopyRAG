@@ -66,17 +66,8 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 col1,col2 = st.columns([0.5,0.5],gap="small")
-with col1:
-    pdf_list = [item for item in os.listdir('./') if '.pdf' in item]
-    dct = {}
-    for item in pdf_list:
-        idx = item.replace('.pdf','')
-        idx = idx.replace(' ','-').replace('_','-').lower()
-        dct[idx] = item
-
-    pdf_viewer(dct[selected_file],height=800,width=600)
             
-with col2:
+with col1:
 
     prompt = st.chat_input("What's on your mind?")
    
@@ -127,6 +118,15 @@ with col2:
                 with st.chat_message("assistant"):
                     st.markdown(ans) 
                 st.session_state.messages.append({"role": "assistant", "content": ans})
+with col2:
+    pdf_list = [item for item in os.listdir('./') if '.pdf' in item]
+    dct = {}
+    for item in pdf_list:
+        idx = item.replace('.pdf','')
+        idx = idx.replace(' ','-').replace('_','-').lower()
+        dct[idx] = item
+
+    pdf_viewer(dct[selected_file],height=800,width=600)
 
 # cols = st.columns([.5,.5])
 # with cols[0]:
