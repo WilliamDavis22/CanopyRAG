@@ -1,0 +1,91 @@
+{
+    "demo": {
+        "williamdavis4": {
+            "documents": [
+                "article-v"
+            ],
+            "indexed": []
+        },
+        "wd24307": {
+            "documents": [
+                "article-v"
+            ],
+            "indexed": []
+        },
+        "new_user": {
+            "documents": [
+                "article-v",
+                "bii-2024-global-outlook-ca"
+            ],
+            "indexed": [
+                "article-v",
+                "bii-2024-global-outlook-ca"
+            ]
+        },
+        "wdavis4": {
+            "documents": [
+                "bii-2024-global-outlook-ca",
+                "bp-stats-review-2022-full-report",
+                "article-v",
+                "sample-client-profile",
+                "citi-wealth-outlook-2024",
+                "jpmorgan-investment-outlook-for-2024",
+                "article-v",
+                "bii-2024-global-outlook-ca",
+                "citi-wealth-outlook-2024",
+                "jpmorgan-investment-outlook-for-2024",
+                "sample-client-profile"
+            ],
+            "indexed": [
+                "article-v",
+                "bp-stats-review-2022-full-report",
+                "bii-2024-global-outlook-ca",
+                "sample-client-profile",
+                "citi-wealth-outlook-2024",
+                "jpmorgan-investment-outlook-for-2024"
+            ]
+        },
+        "brand_new_user": {
+            "documents": [
+                "bii-2024-global-outlook-ca",
+                "bp-stats-review-2022-full-report",
+                "article-v",
+                "sample-client-profile",
+                "citi-wealth-outlook-2024"
+            ],
+            "indexed": [
+                "article-v",
+                "bp-stats-review-2022-full-report",
+                "bii-2024-global-outlook-ca",
+                "sample-client-profile",
+                "citi-wealth-outlook-2024"
+            ]
+        },
+        "Alan Turing": {
+            "documents": [
+                "bii-2024-global-outlook-ca",
+                "citi-wealth-outlook-2024"
+            ],
+            "indexed": [
+                "bii-2024-global-outlook-ca",
+                "citi-wealth-outlook-2024"
+            ]
+        },
+        "Josh Allen": {
+            "documents": [
+                "bii-2024-global-outlook-ca",
+                "article-v",
+                "sample-client-profile",
+                "citi-wealth-outlook-2024",
+                "jpmorgan-investment-outlook-for-2024"
+            ],
+            "indexed": [
+                "bii-2024-global-outlook-ca",
+                "article-v",
+                "sample-client-profile",
+                "citi-wealth-outlook-2024",
+                "jpmorgan-investment-outlook-for-2024"
+            ]
+        }
+    }
+}
