@@ -24,7 +24,7 @@ st.set_page_config(layout="wide")
 st.title("Chat with your Documents")
 
 with st.columns([0.2,0.5])[0]:
-    user = st.text_input("Username", "John Doe")
+    user = st.text_input("Username", "Default User")
 
 if user:
     with open('records.json','r') as f:
@@ -34,7 +34,8 @@ if user:
         records['demo'][user] = {'documents':[],'indexed':[]}
 
     #if st.button(label="🥚"):
-    with st.columns([0.2,0.5])[0]:
+    file_cols = st.columns([0.2,0.5])
+    with file_cols[0]:
         uploaded_files = st.file_uploader(label="Upload your files", key='upload_file',accept_multiple_files=True)
         if 'processed_files' not in st.session_state:
             processed_files = {}
@@ -81,8 +82,6 @@ if user:
                 records['demo'][user]['documents'] = list(set(records['demo'][user]['documents']))
                 with open('records.json','w') as f:
                     json.dump(records,f,indent=4)
-                if st.button('Submit'):
-                    print('submitted')
 
     if len(records['demo'][user]['documents']) > 0:
         indexes = records['demo'][user]['documents']
@@ -91,6 +90,7 @@ if user:
             indexes += files
             indexes = list(set(indexes))
 
+        indexes = list(set(indexes))
         selected_files = [ind for selected, ind in zip([st.checkbox(item,value=True) for item in indexes],indexes) if selected]
         st.session_state['selected_files'] = selected_files
 
@@ -107,21 +107,22 @@ if user:
         kb.connect()
         print('connected')
         for idx_fp in st.session_state['selected_files']:
-            if idx_fp not in records['demo'][user]['indexed']:
-                try:
-                    documents = [Document(id=line['id'],
-                                text=line['text'],
-                                source=line['source'],
-                                metadata=line['metadata']) for line in st.session_state['processed_files'][idx_fp+'.pdf']]
-                    with st.spinner(f"Creating new index for {selected_file}... "):
-                        kb.upsert(documents,namespace=namespace,show_progress_bar=True)
+            if 'processed_files' in st.session_state:
+                if idx_fp not in records['demo'][user]['indexed']:
+                    try:
+                        documents = [Document(id=line['id'],
+                                    text=line['text'],
+                                    source=line['source'],
+                                    metadata=line['metadata']) for line in st.session_state['processed_files'][idx_fp+'.pdf']]
+                        with st.spinner(f"Creating new index for {idx_fp}... "):
+                            kb.upsert(documents,namespace=namespace,show_progress_bar=True)
 
-                    records['demo'][user]['indexed'].append(idx_fp)
-                    with open('records.json','w') as f:
-                        json.dump(records,f,indent=4)
+                        records['demo'][user]['indexed'].append(idx_fp)
+                        with open('records.json','w') as f:
+                            json.dump(records,f,indent=4)
 
-                except Exception as e:
-                    print(e)
+                    except Exception as e:
+                        print(e)
 
         metadata_filter = {
             "title": {"$in":[idx_fp+'.pdf' for idx_fp in st.session_state['selected_files']]}
