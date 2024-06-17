@@ -34,7 +34,7 @@ if user:
         records['demo'][user] = {'documents':[],'indexed':[]}
 
     #if st.button(label="🥚"):
-    file_cols = st.columns([0.2,0.5])
+    file_cols = st.columns([0.2,0.2,0.4],gap='medium')
     with file_cols[0]:
         uploaded_files = st.file_uploader(label="Upload your files", key='upload_file',accept_multiple_files=True)
         if 'processed_files' not in st.session_state:
@@ -49,11 +49,12 @@ if user:
                         with st.spinner(f"Reading {uploaded_file.name}..."):
                             pdf_file = None
                             processed_pages = None
-                            formatted_json_fp = uploaded_file.name.replace('.pdf','.json')
+                            formatted_json_fp = uploaded_file.name.replace('.pdf','.json').replace(' ','-').replace('_','-').lower()
+                            formatted_pdf_fp = uploaded_file.name.replace(' ','-').replace('_','-').lower()
                             if not os.path.exists(formatted_json_fp):
-                                with open(uploaded_file.name,'wb') as f:
+                                with open(formatted_pdf_fp,'wb') as f:
                                     f.write(uploaded_file.getvalue())
-                                doc = fitz.open(uploaded_file.name)
+                                doc = fitz.open(formatted_pdf_fp)
                                 extracted_text = [page.get_text() for page in doc]
                                 data = []
                                 for i,page in enumerate(extracted_text):
@@ -61,7 +62,7 @@ if user:
                                         'id': str(i), 
                                         'text': page, 
                                         'source': f'{uploaded_file.name}: page {i+1}', 
-                                        'metadata': {'title': uploaded_file.name,
+                                        'metadata': {'title': uploaded_file.name.replace(' ','-').replace('_','-').lower(),
                                                     'primary_category': 'Finance',
                                                     'published': 2024
                                                     },
@@ -82,6 +83,19 @@ if user:
                 records['demo'][user]['documents'] = list(set(records['demo'][user]['documents']))
                 with open('records.json','w') as f:
                     json.dump(records,f,indent=4)
+
+    with file_cols[1]:
+        with st.form(key='delete_form', clear_on_submit=True, border=False):
+            delete_doc = st.text_input("Remove files from Database", placeholder="file.pdf")
+            if st.form_submit_button('Delete',type='primary'):
+                try:
+                    records['demo'][user]['documents'].remove(delete_doc)
+                    records['demo'][user]['indexed'].remove(delete_doc)
+                    with open('records.json','w') as f:
+                        json.dump(records,f,indent=4)
+                except Exception as e:
+                    print(e)
+                print('delete',delete_doc)
 
     if len(records['demo'][user]['documents']) > 0:
         indexes = records['demo'][user]['documents']
