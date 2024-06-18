@@ -105,7 +105,7 @@ if user:
             indexes = list(set(indexes))
 
         indexes = list(set(indexes))
-        selected_files = [ind for selected, ind in zip([st.checkbox(item,value=True) for item in indexes],indexes) if selected]
+        selected_files = [ind for selected, ind in zip([st.checkbox(item,value=False) for item in indexes],indexes) if selected]
         st.session_state['selected_files'] = selected_files
 
     if 'selected_files' in st.session_state.keys() and len(st.session_state['selected_files']) > 0:
